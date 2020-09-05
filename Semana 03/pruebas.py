@@ -18,8 +18,8 @@ import numpy as np
 from unidecode import unidecode
 import re
 spacyPT = spacy.load('pt_core_news_lg')
-# b2wCorpus = pd.read_csv("/home/augusto/Documents/GitHub/NLPortugues/Semana 03/data/b2w-10k.csv", encoding='utf-8',nrows=200)
-b2wCorpus = pd.read_csv("C:\\tmp\\b2w-10k.csv", encoding='utf-8',nrows=200)
+b2wCorpus = pd.read_csv("/home/augusto/Documents/GitHub/NLPortugues/Semana 03/data/b2w-10k.csv", encoding='utf-8',nrows=2000)
+#b2wCorpus = pd.read_csv("C:\\tmp\\b2w-10k.csv", encoding='utf-8',nrows=200)
 b2wCorpus= b2wCorpus[["review_text", "recommend_to_a_friend"]]
 b2wCorpus['recommend_to_a_friend'].replace({'No': 0, 'Yes': 1}, inplace = True)
 print(b2wCorpus.head())
@@ -43,8 +43,12 @@ from tensorflow.keras import layers
 from tensorflow.keras.layers.experimental.preprocessing import TextVectorization
 
 
-X = b2wCorpus[['review_text_lema']]
+X = b2wCorpus[['review_text']]
 y = b2wCorpus[['recommend_to_a_friend']] 
+print("\n------\n")
+print(b2wCorpus.shape)
+print("\n------\n")
+
 RANDOM_SEED = 42
 np.random.seed(RANDOM_SEED)
 x_train, x_val, y_train, y_val = train_test_split(X, y, test_size=0.2, random_state=RANDOM_SEED)
@@ -72,6 +76,7 @@ model = tf.keras.Sequential([
 
 model.compile(
     loss='binary_crossentropy', optimizer='adam', metrics=['accuracy'])
-model.fit(x_train,y_train,epochs=400,batch_size=10)
+
+model.fit(x_train, y_train, epochs=400, batch_size=10,validation_data=(x_val, y_val))    
 
 
