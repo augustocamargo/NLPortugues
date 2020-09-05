@@ -40,6 +40,8 @@ import tensorflow as tf
 from sklearn.model_selection import train_test_split
 from tensorflow.keras import layers
 from tensorflow.keras.layers.experimental.preprocessing import TextVectorization
+import os
+os.environ["CUDA_VISIBLE_DEVICES"] = "-1"
 
 X = b2wCorpus[['review_text_lema']]
 y = b2wCorpus[['recommend_to_a_friend']] 
@@ -68,4 +70,7 @@ model = tf.keras.Sequential([
     layers.Dense(1, activation='sigmoid'),
 ])
 
+model.compile(
+    loss='binary_crossentropy', optimizer='adam', metrics=['accuracy'])
+model.fit(x_train,y_train,epochs=400,verbose=0)
 
