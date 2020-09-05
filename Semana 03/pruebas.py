@@ -16,6 +16,7 @@ import spacy
 import pandas as pd
 import numpy as np
 from unidecode import unidecode
+import re
 spacyPT = spacy.load('pt_core_news_lg')
 b2wCorpus = pd.read_csv("/home/augusto/Documents/GitHub/NLPortugues/Semana 03/data/b2w-10k.csv", encoding='utf-8')
 b2wCorpus= b2wCorpus[["review_text", "recommend_to_a_friend"]]
@@ -27,7 +28,11 @@ for i, row in b2wCorpus.iterrows():
 #print(b2wCorpus.head())
 #print(spacyPT.Defaults.stop_words)
 b2wCorpus['review_text_lema'] = b2wCorpus.review_text.apply(lambda text: 
-                                          " ".join(token.lemma_ for token in spacyPT(text) 
-                                                   if not token.is_stop and token.pos_ != 'PROPN' ))
+                                          " ".join(re.sub('[^A-Za-z0-9]+', ' ', token.lemma_) for token in spacyPT(text) 
+                                                   if not token.is_stop and token.pos_ not in ['PROPN','NUM','SYM'] ))
+for i, row in b2wCorpus.iterrows():
+    ifor_val =   ' '.join((row['review_text_lema']).split())
+    b2wCorpus.at[i,'review_text_lema']= ifor_val
+    
 print(b2wCorpus.head())
 
