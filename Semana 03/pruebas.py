@@ -1,13 +1,13 @@
 #! /bin/python3
-import nltk
-from nltk.stem import WordNetLemmatizer
-from nltk.corpus import floresta
-stemmer = nltk.stem.RSLPStemmer()
-wordwet_lemmatizer = WordNetLemmatizer()
-words = ['recomendo', 'gostei', 'péssimo', 'ruim','odiei', 'amei', 'ruim', 'ótimo']
-for word in words:
+#import nltk
+#from nltk.stem import WordNetLemmatizer
+#from nltk.corpus import floresta
+##stemmer = nltk.stem.RSLPStemmer()
+#wordwet_lemmatizer = WordNetLemmatizer()
+#words = ['recomendo', 'gostei', 'péssimo', 'ruim','odiei', 'amei', 'ruim', 'ótimo']
+#for word in words:
     #lemma2 = wordwet_lemmatizer.lemmatize(word)
-    lemma2 = stemmer.stem(word)
+ #   lemma2 = stemmer.stem(word)
     #print(lemma)
     #print("\n")
     #print(lemma2)
@@ -18,7 +18,8 @@ import numpy as np
 from unidecode import unidecode
 import re
 spacyPT = spacy.load('pt_core_news_lg')
-b2wCorpus = pd.read_csv("/home/augusto/Documents/GitHub/NLPortugues/Semana 03/data/b2w-10k.csv", encoding='utf-8',nrows=200)
+# b2wCorpus = pd.read_csv("/home/augusto/Documents/GitHub/NLPortugues/Semana 03/data/b2w-10k.csv", encoding='utf-8',nrows=200)
+b2wCorpus = pd.read_csv("C:\\tmp\\b2w-10k.csv", encoding='utf-8',nrows=200)
 b2wCorpus= b2wCorpus[["review_text", "recommend_to_a_friend"]]
 b2wCorpus['recommend_to_a_friend'].replace({'No': 0, 'Yes': 1}, inplace = True)
 print(b2wCorpus.head())
@@ -40,8 +41,7 @@ import tensorflow as tf
 from sklearn.model_selection import train_test_split
 from tensorflow.keras import layers
 from tensorflow.keras.layers.experimental.preprocessing import TextVectorization
-import os
-os.environ["CUDA_VISIBLE_DEVICES"] = "-1"
+
 
 X = b2wCorpus[['review_text_lema']]
 y = b2wCorpus[['recommend_to_a_friend']] 
@@ -72,5 +72,6 @@ model = tf.keras.Sequential([
 
 model.compile(
     loss='binary_crossentropy', optimizer='adam', metrics=['accuracy'])
-model.fit(x_train,y_train,epochs=400,verbose=0)
+model.fit(x_train,y_train,epochs=400,batch_size=10)
+
 
