@@ -8,7 +8,7 @@ from tensorflow.keras import layers
 from tensorflow.keras.layers.experimental.preprocessing import TextVectorization
 
 #b2wCorpus = pd.read_csv("/home/augusto/Documents/GitHub/NLPortugues/Semana 03/data/b2w-10k.csv", encoding='utf-8',nrows=2000)
-b2wCorpus = pd.read_csv("C:\\tmp\\b2w-10k.csv", encoding='utf-8',nrows=50)
+b2wCorpus = pd.read_csv("C:\\tmp\\b2w-10k.csv", encoding='utf-8',nrows=100)
 b2wCorpus= b2wCorpus[["review_text", "recommend_to_a_friend"]]
 b2wCorpus['recommend_to_a_friend'].replace({'No': 0, 'Yes': 1}, inplace = True)
 
@@ -25,7 +25,6 @@ RANDOM_SEED = 42
 np.random.seed(RANDOM_SEED)
 x_train, x_val, y_train, y_val = train_test_split(x, y, test_size=0.2, random_state=RANDOM_SEED)
 
-#textVecLayer = TextVectorization( output_mode="int", pad_to_max_tokens=True)
 text_dataset = tf.data.Dataset.from_tensor_slices(x.to_numpy())
 vectorize_layer = TextVectorization(
                                         max_tokens=5000,
@@ -62,7 +61,7 @@ model.compile(
     loss='binary_crossentropy', optimizer='adam', metrics=['accuracy'])
 with tf.device("gpu:0"):
    model.fit(x_train,  y_train, epochs=5, batch_size=10,validation_data=(x_val, y_val))    
-   score = model.evaluate(x_val, y_val, verbose=1)
+   score = model.evaluate(x_val, y_val, verbose=2)
    print(score)
    x_v = x_val.to_numpy()
    x_v = np.append(x_v,['eu odei o produto'])
