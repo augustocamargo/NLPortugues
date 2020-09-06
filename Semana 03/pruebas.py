@@ -7,8 +7,8 @@ from sklearn.model_selection import train_test_split
 from tensorflow.keras import layers
 from tensorflow.keras.layers.experimental.preprocessing import TextVectorization
 
-#b2wCorpus = pd.read_csv("/home/augusto/Documents/GitHub/NLPortugues/Semana 03/data/b2w-10k.csv", encoding='utf-8',nrows=2000)
-b2wCorpus = pd.read_csv("C:\\tmp\\b2w-10k.csv", encoding='utf-8',nrows=100)
+b2wCorpus = pd.read_csv("/home/augusto/Documents/GitHub/NLPortugues/Semana 03/data/b2w-10k.csv", encoding='utf-8',nrows=2000)
+#b2wCorpus = pd.read_csv("C:\\tmp\\b2w-10k.csv", encoding='utf-8',nrows=100)
 b2wCorpus= b2wCorpus[["review_text", "recommend_to_a_friend"]]
 b2wCorpus['recommend_to_a_friend'].replace({'No': 0, 'Yes': 1}, inplace = True)
 
@@ -25,7 +25,7 @@ RANDOM_SEED = 42
 np.random.seed(RANDOM_SEED)
 x_train, x_val, y_train, y_val = train_test_split(x, y, test_size=0.2, random_state=RANDOM_SEED)
 
-text_dataset = tf.data.Dataset.from_tensor_slices(x.to_numpy())
+text_dataset = tf.data.Dataset.from_tensor_slices(x_train.to_numpy())
 vectorize_layer = TextVectorization(
                                         max_tokens=5000,
                                         standardize='lower_and_strip_punctuation',
