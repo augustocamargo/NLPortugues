@@ -7,8 +7,14 @@ from sklearn.model_selection import train_test_split
 from tensorflow.keras import layers
 from tensorflow.keras.layers.experimental.preprocessing import TextVectorization
 
-b2wCorpus = pd.read_csv("/home/augusto/Documents/GitHub/NLPortugues/Semana 03/data/b2w-10k.csv", encoding='utf-8',nrows=2000)
-#b2wCorpus = pd.read_csv("C:\\tmp\\b2w-10k.csv", encoding='utf-8',nrows=100)
+from unidecode import unidecode
+
+#b2wCorpus = pd.read_csv("/home/augusto/Documents/GitHub/NLPortugues/Semana 03/data/b2w-10k.csv", encoding='utf-8',nrows=2000)
+b2wCorpus = pd.read_csv("C:\\tmp\\b2w-10k.csv", encoding='utf-8')
+for i, row in b2wCorpus.iterrows():
+    ifor_val = unidecode(row['review_text']).lower()
+    b2wCorpus.at[i,'review_text']= ifor_val
+
 b2wCorpus= b2wCorpus[["review_text", "recommend_to_a_friend"]]
 b2wCorpus['recommend_to_a_friend'].replace({'No': 0, 'Yes': 1}, inplace = True)
 
@@ -44,8 +50,8 @@ model = tf.keras.Sequential([
                               output_dim = 32),
     ##############################################
     # Conv1D + global max pooling
-    layers.Conv1D(128, 7, padding='valid', activation='relu', strides=3),
-    layers.Conv1D(128, 7, padding='valid', activation='relu', strides=3),
+    layers.Conv1D(512, 7, padding='valid', activation='relu', strides=3),
+    layers.Conv1D(256, 7, padding='valid', activation='relu', strides=3),
     layers.GlobalMaxPooling1D(),
 
     layers.Dense(128, activation='relu'),
@@ -58,10 +64,16 @@ model.compile(loss='binary_crossentropy', optimizer='adam', metrics=['accuracy']
 model.fit(x_train,  y_train, epochs=10, batch_size=32, validation_data=(x_val, y_val))    
 score = model.evaluate(x_val, y_val)
 print(score)
-x_v = x_val
-x_v = np.append(x_v,['eu odei o produto'])
-x_v = np.append(x_v,['eu gostei o produto'])
-x_v = np.append(x_v,['náo comparei de novo'])
-print(x_v)
-pred = model.predict(x_v)
+x_v = pd.DataFrame(columns=['review_text'])
+x_v = x_v.append({'review_text': 'eu odeiei o produto, não funciou, quero meu dinheiro de volta.'}, ignore_index=True)
+x_v = x_v.append({'review_text': 'eu náo gostei do produt, náo quero mais, eu vou devolver logo.'}, ignore_index=True)
+x_v = x_v.append({'review_text': 'não comprarei nunca mais nada do site, foi minha última vez.'}, ignore_index=True)
+x_v = x_v.append({'review_text': 'eu gostei do produto com certeza volto a comprar no site.'}, ignore_index=True)
+x_v = x_v.append({'review_text': 'amei tudo que comprei, com certeza volto a comprar no site.'}, ignore_index=True)
+x_v = x_v.append({'review_text': 'eu achei muito bom o produto, atendeu o que eu precisava'}, ignore_index=True)
+x_v_ = x_v[['review_text']].values
+print(x_v_)
+print(x_v_.shape)
+print(x_val.shape)
+pred = model.predict(x_v_)
 print(np.round(pred))
