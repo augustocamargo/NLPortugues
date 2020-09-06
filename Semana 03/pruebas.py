@@ -10,7 +10,8 @@ from tensorflow.keras.layers.experimental.preprocessing import TextVectorization
 from unidecode import unidecode
 
 #b2wCorpus = pd.read_csv("/home/augusto/Documents/GitHub/NLPortugues/Semana 03/data/b2w-10k.csv", encoding='utf-8',nrows=2000)
-b2wCorpus = pd.read_csv("C:\\tmp\\b2w-10k.csv", encoding='utf-8')
+#b2wCorpus = pd.read_csv("C:\\tmp\\b2w-10k.csv", encoding='utf-8')
+b2wCorpus = pd.read_csv("C:\\tmp\\B2W-Reviews01.csv",  encoding='iso-8859-1' ,sep = ';')
 for i, row in b2wCorpus.iterrows():
     ifor_val = unidecode(row['review_text']).lower()
     b2wCorpus.at[i,'review_text']= ifor_val
@@ -74,6 +75,5 @@ x_v = x_v.append({'review_text': 'eu achei muito bom o produto, atendeu o que eu
 x_v_ = x_v[['review_text']].values
 print(x_v_)
 print(x_v_.shape)
-print(x_val.shape)
 pred = model.predict(x_v_)
 print(np.round(pred))
