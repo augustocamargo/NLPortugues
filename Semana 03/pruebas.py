@@ -10,14 +10,15 @@ from tensorflow.keras.layers.experimental.preprocessing import TextVectorization
 from unidecode import unidecode
 
 #b2wCorpus = pd.read_csv("/home/augusto/Documents/GitHub/NLPortugues/Semana 03/data/b2w-10k.csv", encoding='utf-8',nrows=2000)
-#b2wCorpus = pd.read_csv("C:\\tmp\\b2w-10k.csv", encoding='utf-8')
-b2wCorpus = pd.read_csv("C:\\tmp\\B2W-Reviews01.csv",  encoding='iso-8859-1' ,sep = ';')
+b2wCorpus = pd.read_csv("C:\\tmp\\b2w-10k.csv", encoding='utf-8')
+#b2wCorpus = pd.read_csv("C:\\tmp\\B2W-Reviews01.csv",  encoding='iso-8859-1' ,sep = ';',nrows=20000)
 for i, row in b2wCorpus.iterrows():
     ifor_val = unidecode(row['review_text']).lower()
     b2wCorpus.at[i,'review_text']= ifor_val
 
 b2wCorpus= b2wCorpus[["review_text", "recommend_to_a_friend"]]
 b2wCorpus['recommend_to_a_friend'].replace({'No': 0, 'Yes': 1}, inplace = True)
+print(b2wCorpus.head(200))
 
 x = b2wCorpus[['review_text']].values
 y = b2wCorpus[['recommend_to_a_friend']].values
@@ -51,8 +52,8 @@ model = tf.keras.Sequential([
                               output_dim = 32),
     ##############################################
     # Conv1D + global max pooling
-    layers.Conv1D(512, 7, padding='valid', activation='relu', strides=3),
-    layers.Conv1D(256, 7, padding='valid', activation='relu', strides=3),
+    layers.Conv1D(128, 7, padding='valid', activation='relu', strides=3),
+    layers.Conv1D(128, 7, padding='valid', activation='relu', strides=3),
     layers.GlobalMaxPooling1D(),
 
     layers.Dense(128, activation='relu'),
