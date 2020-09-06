@@ -20,7 +20,7 @@ import re
 import sys
 spacyPT = spacy.load('pt_core_news_lg')
 #b2wCorpus = pd.read_csv("/home/augusto/Documents/GitHub/NLPortugues/Semana 03/data/b2w-10k.csv", encoding='utf-8',nrows=2000)
-b2wCorpus = pd.read_csv("C:\\tmp\\b2w-10k.csv", encoding='utf-8',nrows=20)
+b2wCorpus = pd.read_csv("C:\\tmp\\b2w-10k.csv", encoding='utf-8',nrows=1000)
 b2wCorpus= b2wCorpus[["review_text", "recommend_to_a_friend"]]
 b2wCorpus['recommend_to_a_friend'].replace({'No': 0, 'Yes': 1}, inplace = True)
 
@@ -29,12 +29,12 @@ for i, row in b2wCorpus.iterrows():
     b2wCorpus.at[i,'review_text']= ifor_val
 #print(b2wCorpus.head())
 #print(spacyPT.Defaults.stop_words)
-b2wCorpus['review_text_lema'] = b2wCorpus.review_text.apply(lambda text: 
-                                          " ".join(re.sub('[^A-Za-z0-9]+', ' ', token.lemma_) for token in spacyPT(text) 
-                                                   if not token.is_stop and token.pos_ not in ['PROPN','NUM','SYM'] ))
-for i, row in b2wCorpus.iterrows():
-    ifor_val =   ' '.join((row['review_text_lema']).split())
-    b2wCorpus.at[i,'review_text_lema']= ifor_val
+#b2wCorpus['review_text_lema'] = b2wCorpus.review_text.apply(lambda text: 
+#                                          " ".join(re.sub('[^A-Za-z0-9]+', ' ', token.lemma_) for token in spacyPT(text) 
+#                                                   if not token.is_stop and token.pos_ not in ['PROPN','NUM','SYM'] ))
+#for i, row in b2wCorpus.iterrows():
+#    ifor_val =   ' '.join((row['review_text_lema']).split())
+#    b2wCorpus.at[i,'review_text_lema']= ifor_val
 
 
 import tensorflow as tf
@@ -50,9 +50,16 @@ RANDOM_SEED = 42
 np.random.seed(RANDOM_SEED)
 x_train, x_val, y_train, y_val = train_test_split(X, y, test_size=0.2, random_state=RANDOM_SEED)
 
-textVecLayer = TextVectorization( output_mode="int", pad_to_max_tokens=True)
-textVecLayer.adapt(X.to_numpy())
-vocab_size = len(textVecLayer.get_vocabulary())
+#textVecLayer = TextVectorization( output_mode="int", pad_to_max_tokens=True)
+vectorize_layer = TextVectorization(
+                                        max_tokens=5000,
+                                        output_mode='int',
+                                        output_sequence_length=4,
+                                        pad_to_max_tokens=True
+                                        )
+
+vectorize_layer.adapt(X.to_numpy())
+vocab_size = len(vectorize_layer.get_vocabulary())
 
 #sys.exit()
 
@@ -60,7 +67,7 @@ model = tf.keras.Sequential([
     ############ Seu código aqui##################
     tf.keras.Input(shape=(1, ),
                    dtype=tf.string),
-    textVecLayer,
+    vectorize_layer,
     tf.keras.layers.Embedding(input_dim=vocab_size,
                               output_dim = 32),
     ##############################################
@@ -77,6 +84,6 @@ model = tf.keras.Sequential([
 model.compile(
     loss='binary_crossentropy', optimizer='adam', metrics=['accuracy'])
 
-model.fit(x = x_train, y = y_train, epochs=400, batch_size=10,validation_data=(x_val, y_val))    
-
+model.fit(x = x_train, y = y_train, epochs=5, batch_size=10,validation_data=(x_val, y_val))    
+#p = model.predict( ['eu odiei este produto'])
 
