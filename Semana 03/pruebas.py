@@ -31,7 +31,7 @@ x_train, x_val, y_train, y_val = train_test_split(x, y, test_size=0.2, random_st
 
 #text_dataset = tf.data.Dataset.from_tensor_slices(x.to_numpy())
 vectorize_layer = TextVectorization(
-                                        max_tokens=5000,
+                                        max_tokens=12623,
                                         standardize='lower_and_strip_punctuation',
                                         split='whitespace',
                                         output_mode='int',
@@ -41,7 +41,25 @@ vectorize_layer = TextVectorization(
 vectorize_layer.adapt(x_train)
 vocab_size = len(vectorize_layer.get_vocabulary())
 
+
+with open("C:\\tmp\\b2w-10k.csv", encoding='utf-8') as file:
+    data = file.read().replace('\n', '')
+
+import csv
+with open('C:\\tmp\\out.tsv', 'wt') as out_file:
+    corpus = data.split()
+    wordfreq = []
+    v = vectorize_layer.get_vocabulary()
+    tsv_writer = csv.writer(out_file, delimiter='\t')
+    for w in v:
+        wordfreq.append(corpus.count(w))
+        tsv_writer.writerow([w, corpus.count(w) ])
+
+print(wordfreq)
+quit()
 #sys.exit()
+
+print(vocab_size)
 
 model = tf.keras.Sequential([
     ############ Seu código aqui##################
@@ -67,8 +85,8 @@ model.fit(x_train,  y_train, epochs=10, batch_size=32, validation_data=(x_val, y
 score = model.evaluate(x_val, y_val)
 print(score)
 x_v = pd.DataFrame(columns=['review_text'])
-x_v = x_v.append({'review_text': 'eu odeiei o produto, não funciou, quero meu dinheiro de volta.'}, ignore_index=True)
-x_v = x_v.append({'review_text': 'eu náo gostei do produt, náo quero mais, eu vou devolver logo.'}, ignore_index=True)
+x_v = x_v.append({'review_text': 'odeio'}, ignore_index=True)
+x_v = x_v.append({'review_text': 'amo'}, ignore_index=True)
 x_v = x_v.append({'review_text': 'não comprarei nunca mais nada do site, foi minha última vez.'}, ignore_index=True)
 x_v = x_v.append({'review_text': 'eu gostei do produto com certeza volto a comprar no site.'}, ignore_index=True)
 x_v = x_v.append({'review_text': 'amei tudo que comprei, com certeza volto a comprar no site.'}, ignore_index=True)
