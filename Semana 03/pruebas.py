@@ -1,14 +1,12 @@
 #! /bin/python3
 import pandas as pd
 import numpy as np
-
 import tensorflow as tf
 from sklearn.model_selection import train_test_split
 from tensorflow.keras import layers
 from tensorflow.keras.layers.experimental.preprocessing import TextVectorization
 
-b2wCorpus = pd.read_csv("/home/augusto/Documents/GitHub/NLPortugues/Semana 03/data/b2w-10k.csv", encoding='utf-8',nrows=2000)
-#b2wCorpus = pd.read_csv("C:\\tmp\\b2w-10k.csv", encoding='utf-8',nrows=100)
+b2wCorpus = pd.read_csv("/home/augusto/Documents/GitHub/NLPortugues/Semana 03/data/b2w-10k.csv", encoding='utf-8')
 b2wCorpus= b2wCorpus[["review_text", "recommend_to_a_friend"]]
 b2wCorpus['recommend_to_a_friend'].replace({'No': 0, 'Yes': 1}, inplace = True)
 
@@ -58,10 +56,3 @@ model.compile(loss='binary_crossentropy', optimizer='adam', metrics=['accuracy']
 model.fit(x_train,  y_train, epochs=10, batch_size=32, validation_data=(x_val, y_val))    
 score = model.evaluate(x_val, y_val)
 print(score)
-x_v = x_val
-x_v = np.append(x_v,['eu odei o produto'])
-x_v = np.append(x_v,['eu gostei o produto'])
-x_v = np.append(x_v,['náo comparei de novo'])
-print(x_v)
-pred = model.predict(x_v)
-print(np.round(pred))
