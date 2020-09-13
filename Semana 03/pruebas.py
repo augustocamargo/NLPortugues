@@ -1,12 +1,14 @@
 #! /bin/python3
 import pandas as pd
 import numpy as np
-
 import tensorflow as tf
 from sklearn.model_selection import train_test_split
 from tensorflow.keras import layers
 from tensorflow.keras.layers.experimental.preprocessing import TextVectorization
 
+<<<<<<< HEAD
+b2wCorpus = pd.read_csv("/home/augusto/Documents/GitHub/NLPortugues/Semana 03/data/b2w-10k.csv", encoding='utf-8')
+=======
 from unidecode import unidecode
 import os
 #os.environ["CUDA_VISIBLE_DEVICES"] = "-1"
@@ -19,6 +21,7 @@ for i, row in b2wCorpus.iterrows():
     ifor_val = unidecode(row['review_text']).lower()
     b2wCorpus.at[i,'review_text']= ifor_val
 
+>>>>>>> 4404915ee4694e9caf663973039a381b780cea96
 b2wCorpus= b2wCorpus[["review_text", "recommend_to_a_friend"]]
 b2wCorpus['recommend_to_a_friend'].replace({'No': 0, 'Yes': 1}, inplace = True)
 print(b2wCorpus.head(200))
@@ -86,6 +89,8 @@ with tf.device('/gpu:0'):
     model.fit(x_train,  y_train, epochs=10, batch_size=32, validation_data=(x_val, y_val))    
 score = model.evaluate(x_val, y_val)
 print(score)
+<<<<<<< HEAD
+=======
 x_v = pd.DataFrame(columns=['review_text'])
 x_v = x_v.append({'review_text': 'odeio'}, ignore_index=True)
 x_v = x_v.append({'review_text': 'amo'}, ignore_index=True)
@@ -98,3 +103,4 @@ print(x_v_)
 print(x_v_.shape)
 pred = model.predict(x_v_)
 print(np.round(pred))
+>>>>>>> 4404915ee4694e9caf663973039a381b780cea96
