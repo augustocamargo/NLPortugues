@@ -128,3 +128,5 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+Semana 04/cbow_s50.txt
+Semana 04/word2vec_200k.txt
