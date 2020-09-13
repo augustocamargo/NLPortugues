@@ -8,6 +8,9 @@ from tensorflow.keras import layers
 from tensorflow.keras.layers.experimental.preprocessing import TextVectorization
 
 from unidecode import unidecode
+import os
+#os.environ["CUDA_VISIBLE_DEVICES"] = "-1"
+import tensorflow as tf
 
 #b2wCorpus = pd.read_csv("/home/augusto/Documents/GitHub/NLPortugues/Semana 03/data/b2w-10k.csv", encoding='utf-8',nrows=2000)
 b2wCorpus = pd.read_csv("C:\\tmp\\b2w-10k.csv", encoding='utf-8')
@@ -55,8 +58,7 @@ with open('C:\\tmp\\out.tsv', 'wt') as out_file:
         wordfreq.append(corpus.count(w))
         tsv_writer.writerow([w, corpus.count(w) ])
 
-print(wordfreq)
-quit()
+
 #sys.exit()
 
 print(vocab_size)
@@ -80,8 +82,8 @@ model = tf.keras.Sequential([
 ])
 
 model.compile(loss='binary_crossentropy', optimizer='adam', metrics=['accuracy'])
-
-model.fit(x_train,  y_train, epochs=10, batch_size=32, validation_data=(x_val, y_val))    
+with tf.device('/gpu:0'):
+    model.fit(x_train,  y_train, epochs=10, batch_size=32, validation_data=(x_val, y_val))    
 score = model.evaluate(x_val, y_val)
 print(score)
 x_v = pd.DataFrame(columns=['review_text'])
